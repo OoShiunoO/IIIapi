@@ -1,0 +1,134 @@
+@box("資策會API互動工具") {
+<link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("stylesheets/jquery.datetimepicker.css")">
+<script src="@routes.Assets.versioned("javascripts/jquery.js")"></script>
+<script src="@routes.Assets.versioned("javascripts/jquery.datetimepicker.full.min.js")"></script>
+
+<script type="text/javascript">
+    function generateString() {
+        var form = document.getElementsByName("consoleQuery")[0];
+        var len = form.elements.length;
+        var i;
+        var output = "http://ser-dashboard.srm.pw/dashboard/rawapi" + form.elements[0].value + "?";
+        for (i=1;i<len;i++) {
+            if(i%3==1){
+                output = output + form.elements[i].value + "=";
+            } else if(i%3==2) {
+                output = output + form.elements[i].value + "&";
+            }
+        }
+        output = output.substr(0,output.length-1);
+        document.getElementById("showOutput").innerHTML = output;
+    }
+    function check() {
+        generateString();
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                document.getElementById("showReturnMessage").innerHTML = xhttp.responseText;
+            }
+        };
+        xhttp.open("GET", "/console/query?" + document.getElementById("showOutput").innerHTML, true);
+        xhttp.send();
+    }
+</script>
+<script type="text/javascript">
+    function changeForm(apiPath) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                document.getElementById("formContent").innerHTML = xhttp.responseText;
+            } else {
+                //TODO
+            }
+        };
+        xhttp.open("POST", "/form" + apiPath, true);
+
+        var lastTokenObj = document.getElementById("token");
+        var lastToken = "";
+        if(lastTokenObj!=null){
+            lastToken = lastTokenObj.value;
+        }
+        xhttp.send(lastToken);
+    }
+</script>
+<script type="text/javascript">
+    function updateToken() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4) {
+                if (xhttp.status == 200) {
+                    document.getElementById("token").value = xhttp.responseText;
+                } else {
+                    document.getElementById("token").value = "更新失敗";
+                    document.getElementById("api_response").innerHTML = xhttp.responseText;
+                }
+            }
+        };
+        xhttp.open("POST", "/token/update", true);
+        xhttp.send();
+    }
+    function checkAndSubmit() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                document.getElementById("api_response").innerHTML = xhttp.responseText;
+            } else {
+                //TODO
+            }
+        };
+
+        <!--以下程式碼參考這篇: http://stackoverflow.com/questions/6990729/simple-ajax-form-using-javascript-no-jquery-->
+
+        var form = document.getElementById("inputForm");
+        var elem = form.elements;
+        var params = "";
+        var value;
+        var queryPath = form.action;
+        for (var i = 0; i < elem.length; i++) {
+            if (elem[i].tagName == "SELECT") {
+                value = elem[i].options[elem[i].selectedIndex].value;
+            } else {
+                value = elem[i].value;
+            }
+            params += elem[i].name + "=" + encodeURIComponent(value) + "&";
+        }
+        xhttp.open("POST", queryPath, true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.setRequestHeader("Content-length", params.length);
+        xhttp.send(params);
+        document.getElementById("api_response").innerHTML = '<img src="@routes.Assets.versioned("images/ajax-loader.gif")">';
+    }
+</script>
+
+<div class="panel panel-default" style="margin-top: 40px">
+    <div class="panel-body">
+        <div>
+            <h4 class="form-query-heading">請選擇要使用的API</h4>
+            <select name="apiName" class="form-control" onchange="changeForm(this.value)">
+                <option value="" style="display:none;"></option>
+                <option value="/keyword/fb">Facebook 文章關鍵字搜尋</option>
+                <option value="/keyword/forum">Forum 文章關鍵字搜尋</option>
+                <option value="/keyword/news">News 文章關鍵字搜尋</option>
+                <option value="/keyword/ptt">PTT 文章關鍵字搜尋</option>
+                <option value="/trend/fb">Facebook文章熱門關鍵字</option>
+                <option value="/trend/forum">Forum文章熱門關鍵字</option>
+                <option value="/trend/news">News文章熱門關鍵字</option>
+                <option value="/trend/ptt">Ptt文章熱門關鍵字</option>
+                <option value="/sentiment">文章正負評分析</option>
+            </select>
+            <label id="request-url"></label>
+        </div>
+        <br>
+
+        <div id="formContent">
+
+        </div>
+
+
+    </div>
+</div>
+<div class="panel panel-default" id="api_response">
+
+</div>
+
+}

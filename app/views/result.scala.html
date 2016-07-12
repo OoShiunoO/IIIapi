@@ -1,0 +1,40 @@
+@import java.lang.reflect.Field
+@import model.response.JSONModel
+@(model: JSONModel)
+
+@display(field: Field, obj: Any) = @{
+    field.setAccessible(true)
+    ": " + (field.get(obj) match {
+        case Some(l: List[_]) => "[" + l.mkString(",") + "]"
+        case Some(s) => s.toString
+        case _ => "null"})
+}
+
+@displayResult(field: Field) = {
+    @field.setAccessible(true)
+    @for(result <- field.get(model) match {
+        case Some(s: Seq[_]) => s
+        case Some(s) => Seq(s)
+        case _ => Seq()
+    }){
+        <hr color="red" size="30">
+        @for(f <- result.getClass.getDeclaredFields()){
+            <h5><span style="color:blue;">@f.getName</span>@display(f,result)</h5>
+        }
+        <hr color="red" size="30">
+    }
+}
+
+@if(model!=null) {
+<div class="panel-body">
+    @for(field <- model.getClass.getDeclaredFields()){
+    @if(field.getName!="result"){
+    <h4><span style="color:green;">@field.getName</span>@display(field, model)</h4>
+    }else{
+    @field.setAccessible(true)
+    <h4><span style="color:green;">result: </span></h4>
+    @displayResult(field)
+    }
+    }
+</div>
+}

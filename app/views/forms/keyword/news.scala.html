@@ -1,0 +1,20 @@
+@import model.inputform.KeywordNews
+@import model.MyHelpers._
+@(formObject: Form[KeywordNews]=KeywordNews.form, lastToken: String="")(implicit messages: Messages)
+
+@helper.form(action = routes.Application.userPost("KeywordNews"), args = 'id -> "inputForm") {
+<h4>/keyword/news</h4>
+@helper.inputText(formObject("sitename"))
+@helper.inputText(formObject("Type"))
+@helper.inputText(formObject("startDate"))
+@helper.inputText(formObject("endDate"))
+@helper.inputText(formObject("keyword"))
+@helper.inputText(formObject("searchField"))
+@helper.inputText(formObject("pageSize"))
+@helper.inputText(formObject("pageNum"))
+@helper.inputText(formObject("sort"))
+<label for="token">token&nbsp;</label><input id="token" name="token" value=@lastToken><br>
+<input type="hidden" id="apiPath" name="apiPath" value="/keyword/news"/>
+<button id="submit" type="button" class="btn btn-primary" onclick="checkAndSubmit()">提交請求</button>
+<button type="button" class="btn btn-primary" onclick="updateToken()">更新Token</button>
+}

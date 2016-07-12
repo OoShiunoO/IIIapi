@@ -1,0 +1,29 @@
+@import service.PttArticle
+@(articles: List[PttArticle]=null, error:String=null)
+
+@box("資策會API互動工具") {
+<div>
+    <br>
+    <form action="/ptt/analyze" method="get">
+        <label for="board">版名(可輸入多個,用逗號隔開)&nbsp;</label><input id="board" name="board">
+        <label for="startDate">起始日期&nbsp;</label><input id="startDate" name="startDate">
+        <label for="endDate">結束日期&nbsp;</label><input id="endDate" name="endDate">
+        <input type="submit" name="SB" value="提交請求">
+    </form>
+</div>
+<div class="panel-body">
+    @if(articles!=null) {
+    @for(article <- articles){
+    <a href="@article.id" target="_blank">文章id:@article.id.split("/")(5)</a>
+    @article.textSeg.map(x=>(x._1,x._2.toString().substring(0,6))).mkString(" ")<br>
+    <span style="color:orange;">推文關鍵字:</span>&nbsp;
+    @if(article.pushetSeg.length==0){無法爬取推文。}
+    @article.pushetSeg.map(x=>(x._1,x._2.toString().substring(0,6))).mkString(" ")<br>
+    <hr>
+    }
+    }
+    @if(error!=null) {
+    @error
+    }
+</div>
+}

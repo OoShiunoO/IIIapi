@@ -1,0 +1,12 @@
+@import model.inputform.Sentiment
+@import model.MyHelpers._
+@(formObject: Form[Sentiment]=Sentiment.form, lastToken: String="")(implicit messages: Messages)
+
+@helper.form(action = routes.Application.userPost("Sentiment"), args = 'id -> "inputForm") {
+<h4>/sentiment</h4>
+@helper.inputText(formObject("dataId"), 'required -> true)
+<label for="token">token&nbsp;</label><input id="token" name="token" value=@lastToken><br>
+<input type="hidden" id="apiPath" name="apiPath" value="/sentiment"/>
+<button id="submit" type="button" class="btn btn-primary" onclick="checkAndSubmit()">提交請求</button>
+<button type="button" class="btn btn-primary" onclick="updateToken()">更新Token</button>
+}

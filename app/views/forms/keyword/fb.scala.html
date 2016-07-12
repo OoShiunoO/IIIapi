@@ -1,0 +1,20 @@
+@import model.inputform.KeywordFb
+@import model.MyHelpers._
+@(keywordFbForm: Form[KeywordFb]=KeywordFb.form, lastToken: String="")(implicit messages: Messages)
+
+@helper.form(action = routes.Application.userPost("KeywordFb"), args = 'id -> "inputForm") {
+<h4>/keyword/fb</h4>
+@helper.inputText(keywordFbForm("pageId"))
+@helper.inputText(keywordFbForm("startDate"))
+@helper.inputText(keywordFbForm("endDate"))
+@helper.inputText(keywordFbForm("keyword"))
+@helper.inputText(keywordFbForm("searchField"))
+@helper.inputText(keywordFbForm("pageSize"))
+@helper.inputText(keywordFbForm("pageNum"))
+@helper.inputText(keywordFbForm("postType"))
+@helper.inputText(keywordFbForm("sort"))
+<label for="token">token&nbsp;</label><input id="token" name="token" value=@lastToken><br>
+<input type="hidden" id="apiPath" name="apiPath" value="/keyword/fb"/>
+<button id="submit" type="button" class="btn btn-primary" onclick="checkAndSubmit()">提交請求</button>
+<button type="button" class="btn btn-primary" onclick="updateToken()">更新Token</button>
+}

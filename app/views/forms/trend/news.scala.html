@@ -1,0 +1,18 @@
+@import model.inputform.TrendNews
+@import model.MyHelpers._
+@(formObject: Form[TrendNews]=TrendNews.form, lastToken: String="")(implicit messages: Messages)
+
+@helper.form(action = routes.Application.userPost("TrendNews"), args = 'id -> "inputForm") {
+<h4>/trend/news</h4>
+@helper.inputText(formObject("sitename"))
+@helper.inputText(formObject("Type"))
+@helper.inputText(formObject("keyword"))
+@helper.inputText(formObject("startDate"))
+@helper.inputText(formObject("endDate"))
+@helper.inputText(formObject("limit"))
+@helper.inputText(formObject("threshold"))
+<label for="token">token&nbsp;</label><input id="token" name="token" value=@lastToken><br>
+<input type="hidden" id="apiPath" name="apiPath" value="/trend/news"/>
+<button id="submit" type="button" class="btn btn-primary" onclick="checkAndSubmit()">提交請求</button>
+<button type="button" class="btn btn-primary" onclick="updateToken()">更新Token</button>
+}
